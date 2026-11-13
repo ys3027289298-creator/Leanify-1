@@ -1,3 +1,7 @@
+# Unreleased
+
++ Added support for lossless AVIF recompression through libavif (optional build dependency).
+
 # 0.4.4 (2021-03-10)
 
 + Added concurrent mode to utilize power of all CPUs

@@ -10,6 +10,14 @@ CPPFLAGS    += -I./lib
 CXXFLAGS    += $(CFLAGS) -std=c++17 -fno-rtti
 LDFLAGS     += -flto -lpthread
 
+# Optional lossless AVIF recompression through libavif.
+# Auto-detected via pkg-config; override with AVIF=0 to disable.
+AVIF ?= $(shell pkg-config --exists libavif && echo 1 || echo 0)
+ifeq ($(AVIF),1)
+CPPFLAGS    += -DENABLE_AVIF $(shell pkg-config --cflags libavif)
+LDLIBS      += $(shell pkg-config --libs libavif)
+endif
+
 PREFIX ?= /usr/local
 BINDIR := $(PREFIX)/bin
 INSTALL ?= install

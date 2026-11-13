@@ -6,6 +6,7 @@
 #include <zopfli/zlib_container.h>
 #include <zopflipng/lodepng/lodepng.h>
 
+#include "formats/avif.h"
 #include "formats/data_uri.h"
 #include "formats/dwf.h"
 #include "formats/format.h"
@@ -59,6 +60,11 @@ Format* GetType(void* file_pointer, size_t file_size, const string& filename) {
       memcmp(file_pointer, Png::header_magic, sizeof(Png::header_magic)) == 0) {
     VerbosePrint("PNG detected.");
     return new Png(file_pointer, file_size);
+  } else if (file_size >= 8 &&
+             memcmp(static_cast<uint8_t*>(file_pointer) + 4, Avif::header_magic,
+                    sizeof(Avif::header_magic)) == 0) {
+    VerbosePrint("AVIF detected.");
+    return new Avif(file_pointer, file_size);
   } else if (file_size >= sizeof(Jpeg::header_magic) &&
              memcmp(file_pointer, Jpeg::header_magic, sizeof(Jpeg::header_magic)) == 0) {
     VerbosePrint("JPEG detected.");

@@ -25,6 +25,17 @@ I'm not respossible for any consequence of using Leanify.
 ## File Formats
 
 
+#### AVIF image (.avif)
+
+Single still AVIF images are decoded and re-encoded with lossless AV1,
+keeping the original YUV format, bit depth, range and alpha plane untouched.
+The re-encoded result is only written when it decodes back to pixel-identical
+data and is smaller than the original, otherwise the file is left unchanged.
+Image sequences, progressive images and other unsupported subformats are
+skipped with a diagnostic message. Requires [libavif] at build time; when it
+is not available the format is simply skipped.
+
+
 #### APK file (.apk)
 
 It is based on [ZIP].
@@ -259,6 +270,7 @@ make
 
 
 [APK]: #apk-file-apk
+[libavif]: https://github.com/AOMediaCodec/libavif
 [PNG]: #png-image-png-apng
 [tar]: #tar-archive-tar
 [XML]: #xml-document-xml-xsl-xslt

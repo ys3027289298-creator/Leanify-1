@@ -1,0 +1,37 @@
+PASS: size not increased: ref_10bit.avif (12849 -> 12849)
+PASS: pixel identical: ref_10bit.avif
+PASS: size not increased: ref_alpha.avif (1146 -> 1146)
+PASS: pixel identical: ref_alpha.avif
+PASS: size not increased: ref_avis_brand.avif (2086 -> 2086)
+PASS: pixel identical: ref_avis_brand.avif
+PASS: size not increased: ref_bars.avif (1657 -> 1587)
+PASS: pixel identical: ref_bars.avif
+PASS: size not increased: ref_fast_lossless.avif (14832 -> 14678)
+PASS: pixel identical: ref_fast_lossless.avif
+PASS: size not increased: ref_fast_lossless420.avif (4691 -> 4590)
+PASS: pixel identical: ref_fast_lossless420.avif
+PASS: size not increased: ref_junk.avif (2854 -> 2854)
+PASS: pixel identical: ref_junk.avif
+PASS: size not increased: ref_lossless420_8b.avif (4570 -> 4570)
+PASS: pixel identical: ref_lossless420_8b.avif
+PASS: size not increased: ref_lossless444_8b.avif (14572 -> 14572)
+PASS: pixel identical: ref_lossless444_8b.avif
+PASS: size not increased: ref_lossy.avif (2086 -> 2086)
+PASS: pixel identical: ref_lossy.avif
+PASS: size not increased: ref_sequence.avif (2627 -> 2627)
+PASS: pixel identical: ref_sequence.avif
+PASS: size not increased: ref_truncated.avif (1043 -> 1043)
+PASS: pixel identical: ref_truncated.avif
+PASS: size not increased: ref_xmp.avif (15112 -> 14678)
+PASS: pixel identical: ref_xmp.avif
+PASS: alpha channel identical
+PASS: failure leaves file untouched: ref_truncated.avif
+PASS: failure leaves file untouched: ref_sequence.avif
+PASS: diagnostic for image sequence
+PASS: diagnostic for broken file
+PASS: idempotent on optimized AVIF
+PASS: fast mode skips AVIF
+PASS: PNG zero regression
+PASS: JPEG zero regression
+
+RESULT: 35 passed, 0 failed

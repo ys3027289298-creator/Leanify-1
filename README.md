@@ -35,6 +35,14 @@ To install it, you'll have to sign it again.
 If you don't want to modify any files inside `APK`, use `-d 1` option.
 
 
+#### Bitmap image (.bmp)
+
+Remove trailing data after the end of the image declared by the file header.
+
+The pixel array is never touched, so the image stays pixel-for-pixel identical.
+Files with inconsistent or corrupt headers are left untouched.
+
+
 #### Comic book archive (.cbt, .cbz)
 
 `cbt` is based on [tar]. `cbz` is based on [ZIP].
@@ -85,7 +93,7 @@ Remove all optional section: `FEXTRA`, `FNAME`, `FCOMMENT`, `FHCRC`.
 
 #### Icon file (.ico)
 
-Convert 256x256 BMP to [PNG].
+Convert 256x256 BMP to [PNG] if its AND mask is empty, so no pixel information is lost.
 
 Leanify [PNG] inside, if any.
 

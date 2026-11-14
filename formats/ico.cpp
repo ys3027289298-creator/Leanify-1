@@ -32,6 +32,12 @@ PACK(struct IconDirEntry {
 }  // namespace
 
 size_t Ico::Leanify(size_t size_leanified /*= 0*/) {
+  // need at least the 6-byte ICONDIR header
+  if (size_ < 6) {
+    cerr << "Error: ICO file too small!" << endl;
+    return Format::Leanify(size_leanified);
+  }
+
   // number of images inside ico file
   const uint16_t num_of_img = *(uint16_t*)(fp_ + 4);
 
@@ -47,6 +53,10 @@ size_t Ico::Leanify(size_t size_leanified /*= 0*/) {
             [](const IconDirEntry& a, const IconDirEntry& b) { return a.dwImageOffset < b.dwImageOffset; });
 
   // check overlaps
+  if (entries.front().dwImageOffset < 6 + num_of_img * sizeof(IconDirEntry)) {
+    cerr << "Error: Icon image overlaps with header!" << endl;
+    return Format::Leanify(size_leanified);
+  }
   for (size_t i = 1; i < entries.size(); i++) {
     if (entries[i - 1].dwImageOffset + entries[i - 1].dwBytesInRes > entries[i].dwImageOffset) {
       cerr << "Error: Found overlapping icon entries!" << endl;
@@ -78,11 +88,28 @@ size_t Ico::Leanify(size_t size_leanified /*= 0*/) {
     // Convert 256x256 BMP to PNG if possible
     if (entries[i].bWidth == 0 && entries[i].bHeight == 0) {
       auto dib = reinterpret_cast<Bmp::BITMAPINFOHEADER*>(fp_ + old_offset);
-      if (dib->biSize >= 40 && dib->biWidth == 256 && dib->biHeight == 512 &&  // DIB in ICO always has double height
+      bool convertible =
+          entries[i].dwBytesInRes >= sizeof(Bmp::BITMAPINFOHEADER) &&
+          dib->biSize >= 40 && dib->biWidth == 256 && dib->biHeight == 512 &&  // DIB in ICO always has double height
           dib->biPlanes == 1 && dib->biBitCount == 32 &&                       // only support RGBA for now
           dib->biCompression == 0 &&                                           // BI_RGB aka no compression
           dib->biSize + std::max(dib->biSizeImage, 256 * 256 * 4U) <= entries[i].dwBytesInRes &&
-          (dib->biSizeImage == 0 || dib->biSizeImage >= 256 * 256 * 4U) && dib->biClrUsed == 0) {
+          (dib->biSizeImage == 0 || dib->biSizeImage >= 256 * 256 * 4U) && dib->biClrUsed == 0;
+      if (convertible) {
+        // The AND mask (1 bpp) follows the XOR bitmap. Converting to PNG
+        // would drop it, so only convert when every mask bit is 0,
+        // otherwise the pixels would change.
+        const uint8_t* mask = fp_ + old_offset + dib->biSize + 256 * 256 * 4;
+        const uint8_t* mask_end =
+            mask + std::min<size_t>(256 * 256 / 8, entries[i].dwBytesInRes - dib->biSize - 256 * 256 * 4);
+        for (const uint8_t* p = mask; p < mask_end; p++) {
+          if (*p) {
+            convertible = false;
+            break;
+          }
+        }
+      }
+      if (convertible) {
         VerbosePrint("Converting 256x256 BMP to PNG...");
         // BMP stores ARGB in little endian, so it's actually BGRA, convert it to normal RGBA
         // It also stores the pixels upside down for some reason, so reverse it.

@@ -6,6 +6,7 @@
 #include <zopfli/zlib_container.h>
 #include <zopflipng/lodepng/lodepng.h>
 
+#include "formats/bmp.h"
 #include "formats/data_uri.h"
 #include "formats/dwf.h"
 #include "formats/format.h"
@@ -83,6 +84,10 @@ Format* GetType(void* file_pointer, size_t file_size, const string& filename) {
              memcmp(file_pointer, Ico::header_magic, sizeof(Ico::header_magic)) == 0) {
     VerbosePrint("ICO detected.");
     return new Ico(file_pointer, file_size);
+  } else if (file_size >= sizeof(Bmp::header_magic) &&
+             memcmp(file_pointer, Bmp::header_magic, sizeof(Bmp::header_magic)) == 0) {
+    VerbosePrint("BMP detected.");
+    return new Bmp(file_pointer, file_size);
   } else if (file_size >= sizeof(Dwf::header_magic) &&
              memcmp(file_pointer, Dwf::header_magic, sizeof(Dwf::header_magic)) == 0) {
     VerbosePrint("DWF detected.");

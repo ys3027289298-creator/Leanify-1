@@ -4,8 +4,6 @@
 #include "../utils.h"
 #include "format.h"
 
-// The support for this format is not yet implemented see bmp.cpp for details.
-
 class Bmp : public Format {
  public:
   using Format::Format;

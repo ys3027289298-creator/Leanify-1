@@ -102,6 +102,19 @@ Remove all application markers (e.g. `Exif` (use `--keep-exif` to keep it), `ICC
 Optimize with `mozjpeg`.
 
 
+#### AVIF image (.avif)
+
+Optional, requires libavif at build time (auto-detected via pkg-config).
+
+Re-encode the single still image losslessly with libaom and keep it only when
+the re-encoded file decodes to byte-identical pixels and is strictly smaller.
+Image sequences, progressive images and unrecognized brands are skipped
+untouched with a diagnostic.
+
+
+#### Lua object file (.lua, .luac)
+
+Remove all debugging information:
 #### Lua object file (.lua, .luac)
 
 Remove all debugging information:
@@ -143,6 +156,19 @@ Remove all ancillary chunks except for:
 * `npTc`: Android 9Patch images (*.9.png)
 
 Optimize with `ZopfliPNG`.
+
+
+#### WebP image (.webp)
+
+Optional, requires libwebp at build time (auto-detected via pkg-config).
+
+Parse the RIFF container and its chunks, decode the still image and re-encode
+the VP8L bitstream losslessly (`exact=1`, so RGB under fully transparent
+pixels is preserved). The result is accepted only when it decodes back to
+byte-identical RGBA pixels and is strictly smaller; the `VP8X`, `ICCP`,
+`EXIF` and `XMP` chunks are carried over. Lossy (VP8) and animated WebP,
+and truncated or malformed containers, are skipped untouched with a
+diagnostic.
 
 
 #### RDB archive (.rdb)

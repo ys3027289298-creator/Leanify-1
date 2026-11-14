@@ -1,0 +1,13 @@
+{"version": 2, "width": 120, "height": 36, "timestamp": 1794614699, "idle_time_limit": 1.5, "title": "WebP lossless support - segment 1/4 - build", "env": {"SHELL": "/bin/bash", "TERM": "xterm-256color"}}
+[0.5, "o", "\r\n\r\n"]
+[0.68, "o", "  \u001b[1;46m  SEGMENT 1/4  BUILD: optional libwebp, auto-detected by pkg-config  \u001b[0m\r\n\r\n"]
+[0.86, "o", "$ export PKG_CONFIG_PATH=.../libwebp-static/lib/pkgconfig   # static libwebp + libsharpyuv\r\n"]
+[1.04, "o", "$ make                                        # wildcard picks formats/webp.cpp\r\n\r\n"]
+[1.22, "o", "  g++ ... -DENABLE_WEBP -I/tmp/libwebp-static/include  -c -o formats/webp.o formats/webp.cpp\r\n"]
+[1.4, "o", "  g++ ... -o leanify   (libwebp.a + libsharpyuv.a inlined via LTO)\r\n"]
+[1.58, "o", "  build finished, exit code 0\r\n\r\n"]
+[1.76, "o", "$ readelf -d leanify | grep NEEDED             # self-contained, no new runtime deps\r\n"]
+[1.94, "o", "   0x0000000000000001 (NEEDED)             Shared library: [libm.so.6]\r\n"]
+[2.12, "o", "   0x0000000000000001 (NEEDED)             Shared library: [libstdc++.so.6]\r\n"]
+[2.3, "o", "   0x0000000000000001 (NEEDED)             Shared library: [libgcc_s.so.1]\r\n"]
+[2.48, "o", "   0x0000000000000001 (NEEDED)             Shared library: [libc.so.6]\r\n\r\n"]

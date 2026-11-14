@@ -1,3 +1,13 @@
+# Unreleased
+
++ Added optional lossless WebP recompression through libwebp (auto-detected
+  via pkg-config, `WEBP=0` to disable). RIFF/VP8X containers are parsed,
+  still VP8L images are re-encoded losslessly with pixel verification, and
+  the result is written only when it is strictly smaller. Lossy, animated
+  and malformed files are skipped untouched with a diagnostic.
+
++ Added optional lossless AVIF recompression through libavif.
+
 # 0.4.4 (2021-03-10)
 
 + Added concurrent mode to utilize power of all CPUs

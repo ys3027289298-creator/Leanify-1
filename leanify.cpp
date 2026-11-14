@@ -21,6 +21,8 @@
 #include "formats/swf.h"
 #include "formats/tar.h"
 #include "formats/vcf.h"
+#include "formats/avif.h"
+#include "formats/webp.h"
 #include "formats/xml.h"
 #include "formats/zip.h"
 #include "utils.h"
@@ -59,6 +61,16 @@ Format* GetType(void* file_pointer, size_t file_size, const string& filename) {
       memcmp(file_pointer, Png::header_magic, sizeof(Png::header_magic)) == 0) {
     VerbosePrint("PNG detected.");
     return new Png(file_pointer, file_size);
+  } else if (file_size >= sizeof(Webp::header_magic) &&
+             memcmp(file_pointer, Webp::header_magic, 4) == 0 &&
+             memcmp(static_cast<uint8_t*>(file_pointer) + 8, Webp::header_magic + 8, 4) == 0) {
+    VerbosePrint("WebP detected.");
+    return new Webp(file_pointer, file_size);
+  } else if (file_size >= 8 &&
+             memcmp(static_cast<uint8_t*>(file_pointer) + 4, Avif::header_magic,
+                    sizeof(Avif::header_magic)) == 0) {
+    VerbosePrint("AVIF detected.");
+    return new Avif(file_pointer, file_size);
   } else if (file_size >= sizeof(Jpeg::header_magic) &&
              memcmp(file_pointer, Jpeg::header_magic, sizeof(Jpeg::header_magic)) == 0) {
     VerbosePrint("JPEG detected.");

@@ -1,0 +1,37 @@
+PASS: size not increased: ref_alpha_lossless.webp (3232 -> 3062)
+PASS: pixel identical: ref_alpha_lossless.webp
+PASS: size not increased: ref_animated.webp (1392 -> 1392)
+PASS: pixel decode not applicable: ref_animated.webp (corrupt/unsupported input)
+PASS: failure/skip leaves file untouched: ref_animated.webp
+PASS: diagnostic emitted: ref_animated.webp
+PASS: size not increased: ref_bad_riffsize.webp (4100 -> 4100)
+PASS: pixel decode not applicable: ref_bad_riffsize.webp (corrupt/unsupported input)
+PASS: failure/skip leaves file untouched: ref_bad_riffsize.webp
+PASS: diagnostic emitted: ref_bad_riffsize.webp
+PASS: size not increased: ref_bars_lossless.webp (4100 -> 3640)
+PASS: pixel identical: ref_bars_lossless.webp
+PASS: size not increased: ref_lossy.webp (4378 -> 4378)
+PASS: pixel identical: ref_lossy.webp
+PASS: failure/skip leaves file untouched: ref_lossy.webp
+PASS: diagnostic emitted: ref_lossy.webp
+PASS: size not increased: ref_meta_lossless.webp (5118 -> 4658)
+PASS: pixel identical: ref_meta_lossless.webp
+PASS: size not increased: ref_photo_lossless.webp (938 -> 938)
+PASS: pixel identical: ref_photo_lossless.webp
+PASS: size not increased: ref_simple_lossless.webp (1520 -> 1360)
+PASS: pixel identical: ref_simple_lossless.webp
+PASS: size not increased: ref_trailing_junk.webp (4356 -> 3640)
+PASS: pixel identical: ref_trailing_junk.webp
+PASS: size not increased: ref_truncated.webp (3980 -> 3980)
+PASS: pixel decode not applicable: ref_truncated.webp (corrupt/unsupported input)
+PASS: failure/skip leaves file untouched: ref_truncated.webp
+PASS: diagnostic emitted: ref_truncated.webp
+PASS: trailing junk removed after successful recompression
+PASS: XMP metadata preserved
+PASS: second run is stable (idempotent)
+PASS: fast mode leaves WebP untouched
+PASS: shared entry handles ref.png
+PASS: shared entry handles ref.jpg
+PASS: magic-based detection without .webp extension
+
+WebP acceptance: 35 passed, 0 failed

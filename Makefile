@@ -14,6 +14,20 @@ PREFIX ?= /usr/local
 BINDIR := $(PREFIX)/bin
 INSTALL ?= install
 
+# Optional lossless recompression through libavif / libwebp.
+# Auto-detected via pkg-config; override with AVIF=0 / WEBP=0 to disable.
+AVIF ?= $(shell pkg-config --exists libavif && echo 1 || echo 0)
+ifeq ($(AVIF),1)
+CPPFLAGS    += -DENABLE_AVIF $(shell pkg-config --cflags libavif)
+LDLIBS      += $(shell pkg-config --libs libavif)
+endif
+
+WEBP ?= $(shell pkg-config --exists libwebp && echo 1 || echo 0)
+ifeq ($(WEBP),1)
+CPPFLAGS    += -DENABLE_WEBP $(shell pkg-config --cflags libwebp)
+LDLIBS      += $(shell pkg-config --libs libwebp)
+endif
+
 ifeq ($(OS), Windows_NT)
     SYSTEM  := Windows
     LDLIBS  += -lshlwapi

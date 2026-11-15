@@ -6,5 +6,7 @@ Clang-Release/
 *.vcxproj.user
 *.aps
 *.res
+svg-slim/test/out/
+svg-slim/test/tools/__pycache__/
 *.o
 *.a

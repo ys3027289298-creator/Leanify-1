@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="100" viewBox="0 0 200 100">
+  <defs>
+    <!-- Same outer body, different inner ids: must NOT be merged. -->
+    <symbol id="outer1" viewBox="0 0 20 20">
+      <rect id="inner-a" width="20" height="20" fill="#ff0000"/>
+    </symbol>
+    <symbol id="outer2" viewBox="0 0 20 20">
+      <rect id="inner-b" width="20" height="20" fill="#ff0000"/>
+    </symbol>
+    <!-- Genuinely identical pair: safe to merge. -->
+    <linearGradient id="grad1" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="1" stop-color="#000000"/>
+    </linearGradient>
+    <linearGradient id="grad2" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="1" stop-color="#000000"/>
+    </linearGradient>
+  </defs>
+  <use href="#outer1" x="0" y="0" width="40" height="40"/>
+  <use href="#outer2" x="50" y="0" width="40" height="40"/>
+  <rect x="0" y="50" width="90" height="40" fill="url(#grad1)"/>
+  <rect x="100" y="50" width="90" height="40" fill="url(#grad2)"/>
+</svg>

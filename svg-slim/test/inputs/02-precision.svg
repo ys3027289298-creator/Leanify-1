@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="300" height="200" viewBox="0 0 300 200">
+  <g transform="translate(12.345678901, 9.876543210) rotate(33.3333333)">
+    <ellipse cx="150.123456789" cy="100.987654321" rx="73.44444444" ry="41.55555556"
+             fill="#3366cc" fill-opacity="0.8750000" stroke="#000000" stroke-width="2.1234567"/>
+  </g>
+  <polygon points="10.111111,20.222222 30.333333,40.444444 50.555555,10.666666"
+           fill="#cc6633"/>
+  <polyline points="0.123456,0.987654 1.987654,2.123456 3.456789,4.567891"
+            fill="none" stroke="#009900" stroke-width="1.000000"/>
+</svg>

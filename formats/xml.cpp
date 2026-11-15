@@ -10,12 +10,110 @@
 #include "../utils.h"
 #include "base64.h"
 #include "data_uri.h"
+#include "svg.h"
 
 using std::map;
 using std::string;
 using std::vector;
 
+namespace {
+// Recursive DOM traversal (attribute cleanup, SVG passes) needs one stack
+// frame per nesting level. pugixml itself parses iteratively, so a pathological
+// document would otherwise parse fine and then overflow the stack during our
+// walks. Anything deeper than this is rejected up front and passed through
+// untouched instead. Verified safe against the default 8 MiB Linux stack.
+constexpr int kMaxNestingDepth = 10000;
+
+// Single-pass lexical depth check. Markup inside comments, CDATA, processing
+// instructions and quoted attribute values cannot open real elements, so all
+// of those are skipped before counting '<'.
+bool ExceedsNestingDepth(const uint8_t* data, size_t size) {
+  int depth = 0;
+  for (size_t i = 0; i < size;) {
+    if (data[i] != '<') {
+      ++i;
+      continue;
+    }
+    if (i + 4 <= size && memcmp(data + i, "<!--", 4) == 0) {
+      i += 4;
+      while (i + 3 <= size && memcmp(data + i, "-->", 3) != 0)
+        ++i;
+      i += 3;
+      continue;
+    }
+    if (i + 9 <= size && memcmp(data + i, "<![CDATA[", 9) == 0) {
+      i += 9;
+      while (i + 3 <= size && memcmp(data + i, "]]>", 3) != 0)
+        ++i;
+      i += 3;
+      continue;
+    }
+    if (i + 2 <= size && data[i + 1] == '?') {
+      i += 2;
+      while (i + 2 <= size && memcmp(data + i, "?>", 2) != 0)
+        ++i;
+      i += 2;
+      continue;
+    }
+    if (i + 2 <= size && data[i + 1] == '!') {
+      // doctype or other declaration: never nests into the element tree.
+      ++i;
+      continue;
+    }
+    bool closing = i + 2 <= size && data[i + 1] == '/';
+    size_t tag_start = i + (closing ? 2 : 1);
+    bool is_element = tag_start < size &&
+                      ((data[tag_start] >= 'a' && data[tag_start] <= 'z') ||
+                       (data[tag_start] >= 'A' && data[tag_start] <= 'Z') ||
+                       data[tag_start] == '_' || data[tag_start] == ':');
+    if (!is_element) {
+      ++i;
+      continue;
+    }
+    if (closing) {
+      if (depth > 0)
+        --depth;
+      ++i;
+      continue;
+    }
+    ++depth;
+    if (depth > kMaxNestingDepth)
+      return true;
+    // Skip the whole start tag so its quoted attribute values (which may
+    // contain '<' characters) are never interpreted as markup.
+    bool in_quote = false;
+    char quote = 0;
+    bool self_closing = false;
+    while (i < size) {
+      char c = static_cast<char>(data[i]);
+      if (in_quote) {
+        if (c == quote)
+          in_quote = false;
+      } else if (c == '"' || c == '\'') {
+        in_quote = true;
+        quote = c;
+      } else if (c == '>') {
+        break;
+      } else if (c == '/' && i + 1 < size && data[i + 1] == '>') {
+        self_closing = true;
+      }
+      ++i;
+    }
+    if (self_closing)
+      --depth;
+    ++i;
+  }
+  return false;
+}
+
+}  // namespace
+
 Xml::Xml(void* p, size_t s) : Format(p, s) {
+  if (ExceedsNestingDepth(static_cast<const uint8_t*>(p), s)) {
+    is_valid_ = false;
+    VerbosePrint("XML/SVG nesting exceeds safety limit, skipping.");
+    return;
+  }
   pugi::xml_parse_result result = doc_.load_buffer(
       fp_, size_, pugi::parse_default | pugi::parse_declaration | pugi::parse_doctype | pugi::parse_ws_pcdata_single);
   is_valid_ = result;
@@ -23,6 +121,7 @@ Xml::Xml(void* p, size_t s) : Format(p, s) {
 }
 
 namespace {
+
 // https://github.com/svg/svgo/blob/master/plugins/_collections.js
 const map<string, string> kCommonDefaultAttributes = { { "x", "0" },
                                                        { "y", "0" },
@@ -225,6 +324,11 @@ size_t Xml::Leanify(size_t size_leanified /*= 0*/) {
     }
   } else if (doc_.child("svg")) {
     VerbosePrint("SVG detected.");
+
+    // pugixml does not load comment nodes under parse_default, so comments are
+    // already gone at this point; the lossless SVG passes run before the
+    // generic attribute cleanup and never touch unsupported subtrees.
+    SvgLeanify(doc_.child("svg"));
 
     // remove XML declaration and doctype
     for (pugi::xml_node child = doc_.first_child(), next; child; child = next) {

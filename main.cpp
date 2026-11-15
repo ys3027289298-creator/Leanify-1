@@ -14,6 +14,7 @@
 #include "fileio.h"
 #include "formats/jpeg.h"
 #include "formats/png.h"
+#include "formats/svg.h"
 #include "formats/zip.h"
 #include "leanify.h"
 #include "version.h"
@@ -118,6 +119,9 @@ void PrintInfo() {
           "\n"
           "PNG options:\n"
           "  --png-lossless-transparent    Prohibit altering hidden colors of fully transparent pixels.\n"
+          "SVG options:\n"
+          "  --svg-precision <digits>      Max fractional digits kept in SVG coordinates,\n"
+          "                                  0 disables trimming. Default: no trimming (legacy mode).\n"
           "ZIP options:\n"
           "  --zip-deflate                 Try deflate even if not compressed originally.\n";
 
@@ -156,6 +160,7 @@ int main(int argc, char** argv) {
 
   is_fast = false;
   is_verbose = false;
+  svg_precision = -1;
   iterations = 15;
   depth = 1;
   max_depth = INT_MAX;
@@ -248,6 +253,43 @@ int main(int argc, char** argv) {
           } else if (STRCMP(argv[i] + j + 1, "zip-deflate") == 0) {
             j += 11;
             Zip::force_deflate_ = true;
+          } else if (STRCMP(argv[i] + j + 1, "svg-precision") == 0) {
+            j += 13;
+            if (i >= argc - 1) {
+              cerr << "There should be a number between 0 and 15 after --svg-precision option." << endl;
+              PrintInfo();
+              return 1;
+            }
+            {
+              // Anything starting with '-' is another option, not a value, so
+              // a missing or negative argument is rejected without reading out
+              // of bounds.
+              if (argv[i + 1][0] == L'-') {
+                cerr << "There should be a number between 0 and 15 after --svg-precision option." << endl;
+                PrintInfo();
+                return 1;
+              }
+              // Require the whole argument to be digits so "abc" is not
+              // accepted as 0 by strtol's partial parse.
+              bool all_digits = true;
+              for (auto d = argv[i + 1]; *d; ++d) {
+                if (*d < L'0' || *d > L'9')
+                  all_digits = false;
+              }
+              long precision = STRTOL(argv[i + 1], nullptr, 10);
+              if (!all_digits) {
+                cerr << "There should be a number between 0 and 15 after --svg-precision option." << endl;
+                PrintInfo();
+                return 1;
+              }
+              ++num_optargs;
+              if (precision < 0 || precision > 15) {
+                cerr << "There should be a number between 0 and 15 after --svg-precision option." << endl;
+                PrintInfo();
+                return 1;
+              }
+              svg_precision = static_cast<int>(precision);
+            }
           } else {
 #ifdef _WIN32
             char mbs[64] = { 0 };

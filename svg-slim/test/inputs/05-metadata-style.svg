@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- production export with metadata and a style block -->
+<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 120 120">
+  <metadata>{"author":"unit-test","tool":"handwritten"}</metadata>
+  <style>.box { fill: #123456; stroke-width: 2.000000; }</style>
+  <defs>
+    <pattern id="p1" width="10" height="10" patternUnits="userSpaceOnUse">
+      <circle cx="5.000000" cy="5.000000" r="2.000000" fill="#abcdef"/>
+    </pattern>
+  </defs>
+  <rect class="box" x="5.111111" y="5.111111" width="109.111111" height="109.111111" fill="url(#p1)"/>
+</svg>

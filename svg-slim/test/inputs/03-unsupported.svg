@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+     width="200" height="200" viewBox="0 0 200 200">
+  <defs>
+    <linearGradient id="g1" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ff0000"/>
+      <stop offset="1" stop-color="#0000ff"/>
+    </linearGradient>
+    <linearGradient id="g2" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ff0000"/>
+      <stop offset="1" stop-color="#0000ff"/>
+    </linearGradient>
+  </defs>
+  <rect x="10.123456789" y="10.123456789" width="80.123456789" height="80.123456789"
+        fill="url(#g1)"/>
+  <!-- animation: unsupported feature, whole subtree must be preserved -->
+  <circle cx="140.000000001" cy="140.000000001" r="30.000000001" fill="#00aa00">
+    <animate attributeName="r" values="30;40;30" dur="3s" repeatCount="indefinite"/>
+  </circle>
+  <rect x="110.000000001" y="20.000000001" width="60.000000001" height="30.000000001"
+        fill="url(#g2)"/>
+</svg>
